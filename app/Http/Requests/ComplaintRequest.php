@@ -26,7 +26,7 @@ class ComplaintRequest extends FormRequest
       'location' => 'required|string|max:255',
       'description' => 'required|string|max:2000',
       'government_id' => 'required|exists:governments,id',
-      'status' => 'required|string|in:new,pending,resolved,rejected',
+      'status' => 'required|string|in:waiting,pending,resolved,rejected',
       'type' => 'required|in:service,financial,employee,environmental,security,other',
       'attachments.*' => 'nullable|file|mimes:png,jpg,jpeg,mp4,mov,pdf,csv|max:10240'
     ];

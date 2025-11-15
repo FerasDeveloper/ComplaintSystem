@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Models\Complaint;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -31,7 +32,15 @@ class StoreAttachmentJob implements ShouldQueue
   {
     try {
       $complaints = app(ComplaintRepositoryInterface::class);
-      $complaints->addAttachment($this->filePath, $this->extension, $this->complaint_id);
+      $complaint = $complaints->addAttachment($this->filePath, $this->extension, $this->complaint_id);
+
+      if ($complaint) {
+        $complaint->increment('processed_attachments');
+
+        if ($complaint->processed_attachments >= $complaint->attachments_count) {
+          $complaint->update(['status' => 'new']);
+        }
+      }
     } catch (Exception $e) {
       // إذا فشلت المحاولة، Laravel سيعيد تشغيل الـ Job تلقائيًا حتى 3 مرات
       Log::error("فشل تخزين المرفق للشكوى {$this->complaint_id}: " . $e->getMessage());
@@ -39,9 +48,16 @@ class StoreAttachmentJob implements ShouldQueue
     }
   }
 
-  // إذا فشلت كل المحاولات
   public function failed(Exception $exception): void
   {
+    $complaint = Complaint::find($this->complaint_id);
+    if ($complaint) {
+      // $notification = Notification::create([
+      //   'user_id' => $complaint->user_id,
+        // 'message' => 'Failed to add your complaint because attachments upload failed. please try again',
+      //   ])
+      $complaint->delete();
+    }
     Log::critical("فشل نهائي بعد 3 محاولات لتخزين المرفق للشكوى {$this->complaint_id}: " . $exception->getMessage());
   }
 }

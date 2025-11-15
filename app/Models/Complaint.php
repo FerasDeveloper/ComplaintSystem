@@ -13,7 +13,9 @@ class Complaint extends Model
     'type',
     'status',
     'user_id',
-    'government_id'
+    'government_id',
+    'attachments_count',
+    'processed_attachments'
   ];
 
   public function citizen()

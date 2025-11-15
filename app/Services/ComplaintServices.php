@@ -30,6 +30,8 @@ class ComplaintServices
         $extension = $file->getClientOriginalExtension();
         StoreAttachmentJob::dispatch($path, $extension, $complaint->id);
       }
+    } else {
+      $complaint->update(['status' => 'new']);
     }
   }
 
@@ -38,7 +40,8 @@ class ComplaintServices
     return $this->complaints->find($id);
   }
 
-  public function getComplaints() {
+  public function getComplaints()
+  {
     return $this->complaints->getComplaints();
   }
 }

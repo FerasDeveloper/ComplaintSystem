@@ -5,9 +5,6 @@ namespace App\Repositories;
 use App\Models\Complaint;
 use App\Models\User;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Http\File;
-use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 
@@ -17,26 +14,30 @@ class EloquentComplaintRepository implements ComplaintRepositoryInterface
 {
   public function create(array $data): Complaint
   {
-    return Complaint::create($data);
+    $complaint = Complaint::create($data);
+    if ($complaint) {
+      $complaint->load('attachments');
+      Cache::put("complaint_{$complaint->id}", $complaint, \Carbon\Carbon::now()->addMinutes(10));
+    }
+    return $complaint;
   }
 
-  public function addAttachment(string $path, string $extension, int $complaint_id): void
+  public function addAttachment(string $path, string $extension, int $complaint_id): Complaint
   {
-    $complaint = Complaint::find($complaint_id);
-    if ($complaint) {
-      $complaint->attachments()->create([
-        'file_path' => $path,
-        'file_type' => $extension,
-      ]);
+    $complaint = Complaint::findOrFail($complaint_id);
+    $complaint->attachments()->create([
+      'file_path' => $path,
+      'file_type' => $extension,
+    ]);
 
-      $complaint->load('attachments');
-      Cache::put("complaint_{$complaint_id}", $complaint, \Carbon\Carbon::now()->addMinutes(1));
-    }
+    $complaint->load('attachments');
+    Cache::put("complaint_{$complaint_id}", $complaint, \Carbon\Carbon::now()->addMinutes(10));
+    return $complaint;
   }
 
   public function find(int $id): Complaint
   {
-    return Cache::remember("complaint_{$id}", \Carbon\Carbon::now()->addMinutes(1), function () use ($id) {
+    return Cache::remember("complaint_{$id}", \Carbon\Carbon::now()->addMinutes(10), function () use ($id) {
       $complaint = Complaint::with('attachments')->findOrFail($id);
       $complaint->attachments->makeHidden(['file_type', 'complaint_id', 'created_at', 'updated_at']);
       return $complaint;

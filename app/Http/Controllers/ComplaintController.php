@@ -3,8 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ComplaintRequest;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Cache;
 
 class ComplaintController extends Controller
 {

@@ -8,7 +8,7 @@ class ComplaintLog extends Model
 {
     protected $fillable = [
         'update_date',
-        'new_status',
+        'ComplaintStaus',
         'note_content',
         'actor_type',
         'complaint_id',
@@ -22,4 +22,7 @@ class ComplaintLog extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function status() {
+        return $this->hasMany(ComplaintStatus::class);
+    }
 }

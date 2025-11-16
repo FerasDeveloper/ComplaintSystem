@@ -33,7 +33,7 @@ class User extends Authenticatable
     'password',
     'phone',
     'is_verified',
-    'role',
+    'role_id',
     'otp_code',
     'otp_expires_at',
     'failed_attempts',
@@ -90,20 +90,29 @@ class User extends Authenticatable
   }
 
 
-  public function isAdmin()
-  {
-    return $this->role === 'admin';
+//   public function isAdmin()
+//   {
+//     return $this->role === 'admin';
+//   }
+//   public function isGovernment()
+//   {
+//     return $this->role === 'government';
+//   }
+//   public function isEmploee()
+//   {
+//     return $this->role === 'employee';
+//   }
+//   public function isCitizen()
+//   {
+//     return $this->role === 'citizen';
+//   }
+
+  public function role() {
+    return $this->hasOne(Role::class);
   }
-  public function isGovernment()
-  {
-    return $this->role === 'government';
+
+  public function nitification() {
+    return $this->hasMany(Notification::class);
   }
-  public function isEmploee()
-  {
-    return $this->role === 'employee';
-  }
-  public function isCitizen()
-  {
-    return $this->role === 'citizen';
-  }
+  
 }

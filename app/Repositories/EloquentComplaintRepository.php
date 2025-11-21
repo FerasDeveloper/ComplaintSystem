@@ -3,6 +3,8 @@
 namespace App\Repositories;
 
 use App\Models\Complaint;
+use App\Models\ComplaintLog;
+use App\Models\ComplaintStatus;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -58,5 +60,20 @@ class EloquentComplaintRepository implements ComplaintRepositoryInterface
         return Complaint::with('attachments')->where('user_id', $user->id)->get();
       }
     });
+  }
+
+  public function getComplaintsLog(int $id)  {
+    $u = Auth::user();
+    $user = User::find($u->id);
+    if($user->role === 'admin' || $user->role === "employee"){
+        return ComplaintLog::query()->where('complaint_id' , $id)->orderBy('update_date' , 'dec');
+    }
+  }
+  public function getCitizenComplaintStatus(int $id){
+    $u = Auth::user();
+    $user = User::find($u->id);
+    if($user->role === 'citizen'){
+        return ComplaintLog::with('status')->where('complaint_id' , $id)->where('user_id', $user->id)->orderBy('update_date' , 'des');
+    }
   }
 }

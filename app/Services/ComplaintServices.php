@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Jobs\StoreAttachmentJob;
 use App\Repositories\ComplaintRepositoryInterface;
 use App\Models\Complaint;
+use App\Models\ComplaintLog;
 
 class ComplaintServices
 {
@@ -43,5 +44,14 @@ class ComplaintServices
   public function getComplaints()
   {
     return $this->complaints->getComplaints();
+  }
+
+  public function getComplaintesLog($id){
+    $data = $this->complaints->getComplaintsLog($id);
+    return $data ;
+  }
+  public function getCitizenComplaintStatus($id){
+    $data = $this->complaints->getCitizenComplaintStatus($id);
+    return $data;
   }
 }

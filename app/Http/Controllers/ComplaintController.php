@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ComplaintRequest;
+use App\Http\Requests\ComplaintUpdateStatusRequest;
+use Illuminate\Container\Attributes\DB;
+use Symfony\Component\HttpFoundation\Request;
 
 class ComplaintController extends Controller
 {
@@ -34,5 +37,12 @@ class ComplaintController extends Controller
   public function getComplaints()
   {
     return response()->json($this->complaintSerive->getComplaints(), 200);
+  }
+
+  public function getComolaintsLog($id){
+    return response()->json($this->complaintSerive->getComplaintesLog($id));
+  }
+  public function getCitizenComplaintStatus($id){
+    return response()->json($this->complaintSerive->getCitizenComplaintStatus($id));
   }
 }

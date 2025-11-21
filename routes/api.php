@@ -19,4 +19,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
   Route::post('addComplaint', [ComplaintController::class, 'addComplaint']);
   Route::get('showComplaint/{id}', [ComplaintController::class, 'showComplaint']);
   Route::get('getComplaints', [ComplaintController::class, 'getComplaints']);
+
+  Route::get('getCitizenComplaintStatus/{complaint_id}' , [ComplaintController::class, 'getCitizenComplaintStatus']);
+  Route::get('getComolaintsLog/{complaint_id}', [ComplaintController::class, 'getComolaintsLog']);
 });
